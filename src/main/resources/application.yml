@@ -1,0 +1,27 @@
+management:
+  endpoint:
+    health:
+      group:
+        readiness:
+          include: readinessState
+
+tgbot:
+  botToken: someBotToken
+
+arr:
+  radarr:
+    url:
+    key:
+    rootFolderPath:
+    monitored:
+    qualityProfileId:
+    minimumAvailability:
+    searchForMovie:
+  sonarr:
+    url:
+    key:
+    rootFolderPath:
+    monitored:
+    qualityProfileId:
+    searchForMissingEpisodes:
+    languageProfileId:
