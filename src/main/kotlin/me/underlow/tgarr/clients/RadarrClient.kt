@@ -1,5 +1,6 @@
 package me.underlow.tgarr.clients
 
+import kotlinx.coroutines.runBlocking
 import me.underlow.tgarr.configuration.ArrConfiguration
 import me.underlow.tgarr.models.radarr.AddMovieOptions
 import me.underlow.tgarr.models.radarr.MovieResource
@@ -11,14 +12,14 @@ class RadarrClient(private val configuration: ArrConfiguration) {
 
     private val radarrAPIClient = RadarrApiClient(configuration.radarr)
 
-    fun addMovie(imdbLink: Movie): ActionResult {
+    fun addMovie(imdbLink: Movie): ActionResult = runBlocking {
         // lookup movie
         logger.info { "Looking for a movie $imdbLink" }
         val movie = radarrAPIClient.lookup(imdbLink.imdbId)
 
         if (movie == null) {
             logger.info { "Cannot find movie $imdbLink" }
-            return Error("Cannot find movie $imdbLink")
+            return@runBlocking Error("Cannot find movie $imdbLink")
         }
 
         logger.info { "Lookup $imdbLink completed with result $movie" }
@@ -26,10 +27,10 @@ class RadarrClient(private val configuration: ArrConfiguration) {
         // add movie
         val result = addMovieInRadarr(movie)
         logger.info { "Adding movie got $result " }
-        return result
+        return@runBlocking result
     }
 
-    private fun addMovieInRadarr(movie: MovieResource): ActionResult {
+    private suspend fun addMovieInRadarr(movie: MovieResource): ActionResult {
         val addMovieOptions = movie.addOptions ?: AddMovieOptions()
         val request = movie.copy(
             id = 0,

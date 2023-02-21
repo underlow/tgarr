@@ -1,18 +1,28 @@
 package me.underlow.tgarr.clients
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.serialization.jackson.*
 import me.underlow.tgarr.configuration.ArrConfiguration
 import me.underlow.tgarr.models.radarr.MovieResource
 import mu.KotlinLogging
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 
 
 class RadarrApiClient(private val configuration: ArrConfiguration.Radarr) {
+
+    private val ktorClient = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            jackson()
+        }
+        install(DefaultRequest) {
+            header("X-Api-Key", configuration.key)
+        }
+    }
 
     private val baseUrl = if (configuration.url.endsWith("/"))
         configuration.url.removeSuffix("/")
@@ -20,72 +30,50 @@ class RadarrApiClient(private val configuration: ArrConfiguration.Radarr) {
         configuration.url
 
 
-    fun lookup(imdbId: String): MovieResource? {
-        try {
-            val httpBuilder = lookupUrl.toHttpUrlOrNull()!!
-                .newBuilder()
-                .addQueryParameter("imdbId", imdbId)
-
-            val request: Request = Request.Builder()
-                .url(httpBuilder.build())
-                .addHeader("X-Api-Key", configuration.key)
-                .addHeader("Content-Type", "application/json")
-                .get()
-                .build()
-            client.newCall(request).execute().use { response ->
-                val body = response.body ?: return null
-                return objectMapper.readValue(body.string(), MovieResource::class.java)
+    suspend fun lookup(imdbId: String): MovieResource? {
+        val response = ktorClient.get(lookupUrl) {
+            url {
+                parameters.append("imdbId", imdbId)
             }
-        } catch (e: Exception) {
-            logger.error(e) { "Cannot execute request to radarr" }
+        }
+
+        if (response.status.value != 200) {
+            logger.error { "Cannot execute request to radarr" }
             return null
         }
+
+        return response.body()
     }
 
 
-    fun addMovie(movie: MovieResource): ActionResult {
-        val body: RequestBody = objectMapper.writeValueAsString(movie).toRequestBody()
+    suspend fun addMovie(movie: MovieResource): ActionResult {
+        val response = ktorClient.post(movieUrl) {
+            contentType(ContentType.Application.Json)
+            setBody(movie)
+        }
 
-        val request: Request = Request.Builder()
-            .url(movieUrl)
-            .addHeader("X-Api-Key", configuration.key)
-            .addHeader("Content-Type", "application/json")
-            .post(body)
-            .build()
-
-        try {
-            //todo: retry on HTTP 500
-            client.newCall(request).execute().use { response ->
-                when (response.code) {
-                    // radarr is not very consistent with return code
-                    // sometimes it is 200 sometimes 400, keep 400 for now
-                    400 -> {
-                        logger.info { "Movie ${movie.title} has already been added" }
-                        return Success("Movie ${movie.title} has already been added")
-                    }
-
-                    201 -> {
-                        logger.info { "Movie ${movie.title} added successfully" }
-                        return Success("Movie ${movie.title} added successfully")
-                    }
-
-                    else -> {
-                        logger.error { "Request to add movie failed with code ${response.code}" }
-                        return Error("Request to add movie failed with code ${response.code}")
-                    }
-                }
+        when (response.status) {
+            // radarr is not very consistent with return code
+            // sometimes it is 200 sometimes 400, keep 400 for now
+            HttpStatusCode.BadRequest -> {
+                logger.info { "Movie ${movie.title} has already been added" }
+                return Success("Movie ${movie.title} has already been added")
             }
-        } catch (e: Exception) {
-            logger.error(e) { "Cannot execute request to radarr" }
-            return Error("Cannot execute request to radarr")
+
+            HttpStatusCode.Created -> {
+                logger.info { "Movie ${movie.title} added successfully" }
+                return Success("Movie ${movie.title} added successfully")
+            }
+
+            else -> {
+                logger.error { "Request to add movie failed with code ${response.status}" }
+                return Error("Request to add movie failed with code ${response.status}")
+            }
         }
     }
 
     private val lookupUrl = "${baseUrl}/api/v3/movie/lookup/imdb"
     private val movieUrl = "${baseUrl}/api/v3/movie"
-
-    private var client = OkHttpClient()
-    private var objectMapper: ObjectMapper = ObjectMapper().registerModule(JavaTimeModule())
 
 }
 

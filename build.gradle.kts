@@ -74,6 +74,13 @@ dependencies {
         exclude(group = "org.springframework.boot")
     }
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinCoroutine}")
+
+    implementation("io.ktor:ktor-client-core:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-client-cio:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-serialization-jackson:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-client-content-negotiation:${Versions.ktorVersion}")
+
     implementation("com.github.pengrad:java-telegram-bot-api:6.3.0")
 
     implementation("org.jsoup:jsoup:1.15.4")

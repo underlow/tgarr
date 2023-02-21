@@ -7,6 +7,7 @@ object Kotlin {
 }
 
 object Versions {
+    const val ktorVersion = "2.2.3"
     const val springBoot = "2.7.2"
     const val springBootDependency = "1.0.12.RELEASE"
     const val springCloudDependency = "2021.0.5"
@@ -16,7 +17,7 @@ object Versions {
 
     const val jjwt = "0.11.5"
     const val swagger = "1.6.9"
-    const val kotlinCoroutine = "1.4.2"
+    const val kotlinCoroutine = "1.6.4"
     const val kotlinLogging = "2.1.23"
     const val kotest = "5.4.1"
     const val jupiter = "5.9.0"
