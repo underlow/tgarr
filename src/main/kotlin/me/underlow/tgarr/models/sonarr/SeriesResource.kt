@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SeriesResource (
 
-    var id: kotlin.Int? = null,
+    val id: kotlin.Int? = null,
 
     val title: kotlin.String? = null,
 
@@ -48,11 +48,11 @@ data class SeriesResource (
 
     val path: kotlin.String? = null,
 
-    var qualityProfileId: kotlin.Int? = null,
+    val qualityProfileId: kotlin.Int? = null,
 
     val seasonFolder: kotlin.Boolean? = null,
 
-    var monitored: kotlin.Boolean? = null,
+    val monitored: kotlin.Boolean? = null,
 
     val useSceneNumbering: kotlin.Boolean? = null,
 
@@ -73,7 +73,7 @@ data class SeriesResource (
 
     val titleSlug: kotlin.String? = null,
 
-    var rootFolderPath: kotlin.String? = null,
+    val rootFolderPath: kotlin.String? = null,
 
     val folder: kotlin.String? = null,
 
@@ -84,7 +84,7 @@ data class SeriesResource (
     val tags: kotlin.collections.Set<kotlin.Int>? = null,
 
 
-    var addOptions: AddSeriesOptions? = null,
+    val addOptions: AddSeriesOptions? = null,
 
 //    val ratings: Ratings? = null,
 
@@ -93,7 +93,7 @@ data class SeriesResource (
     val episodesChanged: kotlin.Boolean? = null,
 
     @Deprecated(message = "This property is deprecated.")
-    var languageProfileId: kotlin.Int? = null
+    val languageProfileId: kotlin.Int? = null
 
 )
 

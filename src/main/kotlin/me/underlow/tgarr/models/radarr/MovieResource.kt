@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class MovieResource(
 
-    var id: kotlin.Int? = null,
+    val id: kotlin.Int? = null,
 
     val title: kotlin.String? = null,
 
@@ -52,11 +52,11 @@ data class MovieResource(
 
     val path: kotlin.String? = null,
 
-    var qualityProfileId: kotlin.Int? = null,
+    val qualityProfileId: kotlin.Int? = null,
 
-    var monitored: kotlin.Boolean? = null,
+    val monitored: kotlin.Boolean? = null,
 
-    var minimumAvailability: MovieStatusType? = null,
+    val minimumAvailability: MovieStatusType? = null,
 
     val isAvailable: kotlin.Boolean? = null,
 
@@ -72,7 +72,7 @@ data class MovieResource(
 
     val titleSlug: kotlin.String? = null,
 
-    var rootFolderPath: kotlin.String? = null,
+    val rootFolderPath: kotlin.String? = null,
 
     val folder: kotlin.String? = null,
 
@@ -84,7 +84,7 @@ data class MovieResource(
 
 //    val added: java.time.OffsetDateTime? = null,
 
-    var addOptions: AddMovieOptions? = null,
+    val addOptions: AddMovieOptions? = null,
 
 //    val ratings: Ratings? = null,
 

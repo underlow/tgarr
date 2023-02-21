@@ -11,26 +11,27 @@ data class ArrConfiguration(
     val radarr: Radarr,
     @NestedConfigurationProperty
     val sonarr: Sonarr
-)
+) {
 
-@ConstructorBinding
-data class Sonarr(
-    val url: String,
-    val key: String,
-    val rootFolderPath: String,
-    val monitored: Boolean,
-    val qualityProfileId: Int,
-    val searchForMissingEpisodes: Boolean,
-    val languageProfileId: Int
-)
+    @ConstructorBinding
+    data class Sonarr(
+        val url: String,
+        val key: String,
+        val rootFolderPath: String,
+        val monitored: Boolean,
+        val qualityProfileId: Int,
+        val searchForMissingEpisodes: Boolean,
+        val languageProfileId: Int
+    )
 
-@ConstructorBinding
-data class Radarr(
-    val url: String,
-    val key: String,
-    val rootFolderPath: String,
-    val monitored: Boolean,
-    val qualityProfileId: Int,
-    val minimumAvailability: String,
-    val searchForMovie: Boolean
-)
+    @ConstructorBinding
+    data class Radarr(
+        val url: String,
+        val key: String,
+        val rootFolderPath: String,
+        val monitored: Boolean,
+        val qualityProfileId: Int,
+        val minimumAvailability: String,
+        val searchForMovie: Boolean
+    )
+}
