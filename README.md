@@ -1,5 +1,5 @@
 # tgarr
-Telegram bot for quick add movies/tv to sonarr/radarr, just send link to imdb title (for example with share button in IMDB mobile application)
+Telegram bot for quick add movies/tv to sonarr/radarr, just send it a link to imdb title (for example with share button in IMDB mobile application)
 
 ## Deploy
 
