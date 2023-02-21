@@ -56,8 +56,6 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
-
     implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude("spring-boot-starter-tomcat")
     }
@@ -89,8 +87,6 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging:${Versions.kotlinLogging}")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-
-    implementation("com.squareup.okhttp3:okhttp:4.9.3")
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2")
 
