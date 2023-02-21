@@ -1,5 +1,6 @@
 package me.underlow.tgarr.clients
 
+import kotlinx.coroutines.runBlocking
 import me.underlow.tgarr.configuration.ArrConfiguration
 import me.underlow.tgarr.models.sonarr.AddSeriesOptions
 import me.underlow.tgarr.models.sonarr.SeriesResource
@@ -10,25 +11,25 @@ class SonarrClient(private val configuration: ArrConfiguration) {
 
     private val sonarrApiClient = SonarrApiClient(configuration.sonarr)
 
-    fun addSeries(imdbLink: Series): ActionResult {
+    fun addSeries(imdbLink: Series): ActionResult = runBlocking {
         logger.info { "Looking for a movie $imdbLink" }
-        val seriesList = sonarrApiClient.lookup(imdbLink)
+        val seriesList = sonarrApiClient.lookup(imdbLink.imdbId)
 
-        val series = seriesList?.firstOrNull { it.imdbId == imdbLink.imdbId }
+        val series = seriesList.firstOrNull { it.imdbId == imdbLink.imdbId }
 
         if (series == null) {
             logger.info { "Lookup $imdbLink failed, series not found" }
-            return Error("Lookup $imdbLink failed, series not found")
+            return@runBlocking Error("Lookup $imdbLink failed, series not found")
         }
         logger.info { "Lookup $imdbLink completed with result $series" }
 
         val result = addMovieInSonarr(series)
         logger.info { "Adding movie got $result " }
-        return result
+        return@runBlocking result
     }
 
 
-    private fun addMovieInSonarr(series: SeriesResource): ActionResult {
+    private suspend fun addMovieInSonarr(series: SeriesResource): ActionResult {
         val addMovieOptions = series.addOptions ?: AddSeriesOptions()
         val request = series.copy(
             id = 0,
