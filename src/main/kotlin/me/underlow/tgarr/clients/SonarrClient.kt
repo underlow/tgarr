@@ -23,8 +23,13 @@ class SonarrClient(private val configuration: ArrConfiguration) {
         }
         logger.info { "Lookup $imdbLink completed with result $series" }
 
+        if (series.id != null) {
+            logger.info { "Series $imdbLink has already been added with id=${series.id}" }
+            return@runBlocking Success("Series $imdbLink has already been added. ${sonarrApiClient.baseUrl}/series/${series.titleSlug}")
+        }
+
         val result = addMovieInSonarr(series)
-        logger.info { "Adding movie got $result " }
+        logger.info { "Adding series got $result " }
         return@runBlocking result
     }
 

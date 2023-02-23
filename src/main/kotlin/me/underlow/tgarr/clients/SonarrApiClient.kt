@@ -27,7 +27,7 @@ class SonarrApiClient(private val configuration: ArrConfiguration.Sonarr) {
         }
     }
 
-    private val baseUrl = if (configuration.url.endsWith("/"))
+    val baseUrl = if (configuration.url.endsWith("/"))
         configuration.url.removeSuffix("/")
     else
         configuration.url
@@ -54,21 +54,15 @@ class SonarrApiClient(private val configuration: ArrConfiguration.Sonarr) {
             setBody(series)
         }
 
-        when (response.status) {
-            // sonarr returns 400 on
-            HttpStatusCode.BadRequest -> {
-                logger.info { "Series ${series.title} has already been added" }
-                return Success("Series ${series.title} has already been added")
-            }
-
+        return when (response.status) {
             HttpStatusCode.Created -> {
                 logger.info { "Series ${series.title} added successfully" }
-                return Success("Series ${series.title} added successfully")
+                Success("Series ${series.title} added successfully")
             }
 
             else -> {
                 logger.error { "Request to add series failed with code ${response.status}" }
-                return Error("Request to add series failed with code ${response.status}")
+                Error("Request to add series failed with code ${response.status}")
             }
         }
     }
