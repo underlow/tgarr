@@ -23,7 +23,7 @@ class TgBotService(
     private final val bot: TelegramBot
 
     init {
-        logger.info { "Initializing Telegram Bot with token ${configuration.botToken}" }
+        logger.info { "Initializing Telegram Bot with token ${configuration.botToken.take(4)}*****" }
         bot = TelegramBot(configuration.botToken)
         logger.info { "Telegram Bot successfully initialized" }
 
